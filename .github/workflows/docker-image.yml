@@ -48,9 +48,9 @@ jobs:
 
     - name: Run pipeline with test data
       working-directory: Nextflow
-        # For example: adding multiple test runs with different parameters
-        # Remember that you can parallelise this by using strategy.matrix
+      # For example: adding multiple test runs with different parameters
+      # Remember that you can parallelise this by using strategy.matrix
       run: |
-	  wget ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2015/12/PXD001819/UPS1_500amol_R1.raw
+          wget "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2015/12/PXD001819/UPS1_500amol_R1.raw"
           mv UPS1_500amol_R1.raw data/
           nextflow run main.nf -profile test,docker
