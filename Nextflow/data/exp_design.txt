@@ -1,0 +1,2 @@
+mzdbfile	exp_cond
+./UPS1_500amol_R1.mzDB	50fmol
