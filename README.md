@@ -1,11 +1,18 @@
 # Workflows to analyze label-free data with SearchGUI and Proline
 
-The provided workflow is based on the docker image veitveit/prolineworkflow that is automatically downloaded.
+## Content
+
+_Nextflow folder:_ Implementation of workflow
+
+_Results folder:_ Output from running the UPS data set
+
+
+The provided workflow is based on the docker image wombatp/proline-pipeline that is automatically downloaded.
 
 You can also create the image by the following command:
 ```
-# main.nf workflow image creation
-docker build -t "veitveit/prolineworkflow:dev" .
+# main.nf workflow image creation from the Nextflow folder
+docker build -t "wombat/proline-pipeline:dev" .
 
 ```
 
@@ -24,8 +31,8 @@ sudo usermod -aG docker $USER
 newgrp docker
 
 # Fetch scripts and data
-git clone https://github.com/veitveit/IS_Benchmarking.git
-cd ./IS_Benchmarking/Proline/Nextflow/data
+git clone https://github.com/wombat-p/Proline-Workflow.git
+cd ./Proline-Workflow/Nextflow/data
 wget ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2015/12/PXD001819/UPS1_500amol_R1.raw
 
 # Nextflow
