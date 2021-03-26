@@ -8,6 +8,7 @@ on:
     branches: [ dev ]
   release:
     types: [published]
+    branches: [ releases ]
 
 jobs:
 
@@ -20,7 +21,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
       CAPSULE_LOG: none
-      WORKFLOW: proline-pipeline
+      WORKFLOW: compomics-pipeline
     strategy:
       matrix:
         # Nextflow versions: check pipeline minimum and current latest
@@ -28,18 +29,26 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build the Docker image
+    - name: Build the Docker image (push)
       working-directory: Nextflow
+      if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
       run: docker build . --file Dockerfile --tag wombatp/${WORKFLOW}:dev
 
+    - name: Build Docker image (release)
+      working-directory: Nextflow
+      if: ${{ github.event_name == 'release' }}
+      run: |
+          version=${{ github.ref }}
+          version=(${version//\// })
+          version=${version[2]}
+          docker build . --file Dockerfile --tag wombatp/${WORKFLOW}:${version}
+
     - name: Push Docker image to DockerHub (dev)
+      if: ${{ github.event_name == 'push' ||  github.event_name == 'pull_request' }}
       run: |
           echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
           docker push wombatp/${WORKFLOW}:dev
 
-    - name: Pull docker image
-      run: |
-          docker pull wombatp/${WORKFLOW}:dev
 
     - name: Install Nextflow
       run: |
@@ -48,9 +57,39 @@ jobs:
 
     - name: Run pipeline with test data
       working-directory: Nextflow
-      # For example: adding multiple test runs with different parameters
-      # Remember that you can parallelise this by using strategy.matrix
+        # For example: adding multiple test runs with different parameters
+        # Remember that you can parallelise this by using strategy.matrix
       run: |
           wget "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2015/12/PXD001819/UPS1_500amol_R1.raw"
           mv UPS1_500amol_R1.raw data/
           nextflow run main.nf -profile test,docker
+
+  push_dockerhub:
+    name: Push new Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    # Only run if the tests passed
+    needs: build
+    # Only run for the releases
+    if: ${{ github.event_name == 'release' }}
+    env:
+      WORKFLOW: compomics-pipeline
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
+    steps:
+     - name: Check out pipeline code
+       uses: actions/checkout@v2
+
+     - name: Build new docker image
+       working-directory: Nextflow
+       run: docker build --no-cache . -t wombatp/${WORKFLOW}:latest
+
+     - name: Push Docker image to DockerHub (release)
+       if: ${{ github.event_name == 'release' }}
+       run: |
+          echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          version=${{ github.ref }}
+          version=(${version//\// })
+          version=${version[2]}
+          docker tag wombatp/${WORKFLOW}:latest wombatp/${WORKFLOW}:${version}
+          docker push wombatp/${WORKFLOW}:${version}
+
