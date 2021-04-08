@@ -378,6 +378,37 @@ process run_proline {
     """
 }
 
+/*
+ * STEP 12 - run PolySTest for stats
+*/
+process run_polystest {
+    publishDir "${params.outdir}"
+
+    when:
+      params.run_statistics
+
+    input:
+      file exp_design from exp_design_file2
+      file proline_res from proline_out
+
+    output:
+      file "polystest_prot_res.csv"  into polystest_prot_out
+      file "polystest_pep_res.csv" into polystest_pep_out
+
+    script:
+    """
+ convertProline=\$(which runPolySTestCLI.R)
+    echo \$convertProline
+    convertProline=\$(dirname \$convertProline)
+    echo \$convertProline
+    Rscript \${convertProline}/convertFromProline.R ${exp_design} ${proline_res}
+    sed -i "s/threads: 2/threads: ${task.cpus}/g" pep_param.yml
+    sed -i "s/threads: 2/threads: ${task.cpus}/g" prot_param.yml
+    runPolySTestCLI.R pep_param.yml
+    runPolySTestCLI.R prot_param.yml    
+    """
+}
+
 
 workflow.onComplete {
     log.info ( workflow.success ? "\nDone! Open the files in the following folder --> $params.outdir\n" : "Oops .. something went wrong" )
