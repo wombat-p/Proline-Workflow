@@ -54,5 +54,3 @@ RUN wget https://github.com/profiproteomics/proline-cli/releases/download/0.2.0-
     chmod -R a+rwx ./proline/ ; \
     mkdir proline_results ; \
     chmod -R a+rwx ./proline_results/
-
-
