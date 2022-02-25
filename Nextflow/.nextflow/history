@@ -1,4 +1,0 @@
-2020-12-10 17:18:46	7m	adoring_faggin	ERR	ff5a8ddddc232da34ccd71367b17bdbb	a728b5bb-4d00-401f-93de-42df457c3073	nextflow run main.nf -profile test,docker
-2020-12-10 17:27:04	2m 47s	special_noether	OK	ff5a8ddddc232da34ccd71367b17bdbb	a728b5bb-4d00-401f-93de-42df457c3073	nextflow run main.nf -profile test,docker -resume
-2021-04-08 10:28:53	-	trusting_rosalind	-	2a94c6dccbc29c77ac11fb2e79ccc66f	2b0124df-fbf2-4451-b0e2-0462e92a825c	nextflow run main.nf -profile docker,test
-2021-04-08 10:30:12	5.1s	drunk_cajal	ERR	2a94c6dccbc29c77ac11fb2e79ccc66f	05156370-d5d8-46a1-9c78-1edadcc770c7	nextflow run main.nf -profile docker,test
