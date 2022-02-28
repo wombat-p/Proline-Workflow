@@ -49,13 +49,14 @@ You should have successfully tested the workflow using the procedure above.
 
 Download the raw files from PRIDE: http://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD001819
 
-Run the workflow with the following command and parameters after changing _RAWFOLDER_ to the folder where the raw files are located. You will also need to adjust the paths to _pxd001819.txt_, _yeast_UPS.fasta_ and _lfq_param_file.txt_, which can be found under _./data_. These files are given in the Results folder of this workflow: https://github.com/wombat-p/Proline-Workflow/tree/dev/Results
+Run the workflow with the following command and parameters after changing _RAWFOLDER_ to the folder where the raw files are located. You will also need to adjust the paths to _pxd001819.txt_, _yeast_UPS.fasta_ and _lfq_param_file.txt_. These files are given in the _data_ folder of this workflow: https://github.com/wombat-p/Proline-Workflow/tree/dev/data
 
 Also adjust the parameter values _max_cpus_ and _max_memory_ to the computing power you have available.
 When running all files, Proline will need at least 16GB.
-```
-nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta yeast_UPS.fasta --precursor_mass_tolerance 5 --fragment_mass_tolerance 0.8 --miscleavages 2 \
---variable_mods 'Oxidation of M, Acetylation of protein N-term' --experiment_design 'pxd001819.txt' --lfq_param \
-'lfq_param_file.txt' --max_cpus 8 --max_memory 16GB -profile docker -with-report -with-trace -with-timeline
 
+```
+nextflow run main.nf --raws 'RAWFOLDER/*.raw' --fasta '../data/yeast_UPS.fasta' --precursor_mass_tolerance 5 \
+  --fragment_mass_tolerance 0.8 --miscleavages 2 --variable_mods 'Oxidation of M, Acetylation of protein N-term' \
+  --experiment_design '../data/pxd001819.txt' --lfq_param '../data/lfq_param_file.txt' \
+  --max_cpus 8 --max_memory 16GB -profile docker -with-report -with-trace -with-timeline
 ```
