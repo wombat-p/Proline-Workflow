@@ -443,7 +443,7 @@ process convert_standard {
   script:
   """
   cp "${exp_design}" exp_design.txt
-  Rscript $baseDir/scripts/Convert2StandFormat.R
+  Rscript $baseDir/bin/Convert2StandFormat.R
   """
  }
 
@@ -473,7 +473,7 @@ process run_final_qc {
   """
   echo '$foo' > params.json
   cp "${fasta_file}" database.fasta
-  Rscript $baseDir/scripts/CalcBenchmarks.R
+  Rscript $baseDir/bin/CalcBenchmarks.R
 
   """
 }
