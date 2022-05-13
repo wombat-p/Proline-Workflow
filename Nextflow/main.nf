@@ -6,8 +6,13 @@
  nf-core/proline_workflow Analysis Pipeline.
 #### Homepage / Documentation
 TODO https://github.com/nf-core/proline
+
+nextflow.enable.dsl=1
+
 ----------------------------------------------------------------------------------------
 */
+import groovy.json.JsonOutput
+
 
 
 def helpMessage() {
@@ -137,7 +142,7 @@ input_raw = Channel.fromPath( params.raws )
  * Create a channel for fasta file
  */
 input_fasta = Channel.fromPath( params.fasta )
-input_fasta.into { fasta_create_decoy; fasta_searchgui }
+input_fasta.into { fasta_create_decoy; fasta_searchgui; fasta_qc }
 
 /* 
  * Create a channel for proline experimental design file
@@ -323,7 +328,7 @@ process set_proline_exp_design {
   // TODO if file available, change raw file names to mzDB and add experimental design
   
   output:
-  file "quant_exp_design.txt" into (exp_design_file_proline, exp_design_file_polystest)
+  file "quant_exp_design.txt" into (exp_design_file_proline, exp_design_file_polystest, exp_design_file_qc)
 
   script: 
   if (expdesign.getName() == "none") {
@@ -413,6 +418,69 @@ process run_polystest {
   runPolySTestCLI.R prot_param.yml
   """
 }
+
+
+/*
+ * STEP 13 - convert data to standard formats
+*/
+process convert_standard {
+  label 'process_low'
+  label 'process_single_thread'
+  
+  publishDir "${params.outdir}", mode:'copy'
+
+  input:
+  file exp_design from exp_design_file_qc
+  file pep_quant from polystest_pep_out
+  file prot_quant from polystest_prot_out
+  
+  output:
+  file "stand_prot_quant_merged.csv" into stdprotquant
+  file "stand_pep_quant_merged.csv" into stdpepquant
+  file "exp_design.txt" into std_exp_design
+  
+  
+  script:
+  """
+  cp "${exp_design}" exp_design.txt
+  mv "${quant_tab}" polystest_pep_res.csv
+  mv "${quant_prot_tab}" polystest_prot_res.csv
+  Rscript $baseDir/scripts/Convert2StandFormat.R
+  """
+ }
+
+
+
+/*
+ * STEP 14 - Some QC
+*/
+process run_final_qc {
+  label 'process_medium'
+  label 'process_single_thread'
+  
+  publishDir "${params.outdir}/", mode:'copy'
+  
+    input:
+        val foo from JsonOutput.prettyPrint(JsonOutput.toJson(params))
+        file exp_design_file from std_exp_design
+        file std_prot_file from stdprotquant
+        file std_pep_file from stdpepquant
+        file fasta_file from fasta_qc
+ 
+  output:
+   file "params.json" into parameters
+   file "benchmarks.json" into benchmarks
+  
+  script:
+  """
+  echo '$foo' > params.json
+  cp "${fasta_file}" database.fasta
+  Rscript $baseDir/scripts/CalcBenchmarks.R
+
+  """
+}
+
+
 
 
 workflow.onComplete {
