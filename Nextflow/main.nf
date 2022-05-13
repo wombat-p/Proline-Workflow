@@ -443,8 +443,8 @@ process convert_standard {
   script:
   """
   cp "${exp_design}" exp_design.txt
-  mv "${quant_tab}" polystest_pep_res.csv
-  mv "${quant_prot_tab}" polystest_prot_res.csv
+  mv "${pep_quant}" polystest_pep_res.csv
+  mv "${prot_quant}" polystest_prot_res.csv
   Rscript $baseDir/scripts/Convert2StandFormat.R
   """
  }
