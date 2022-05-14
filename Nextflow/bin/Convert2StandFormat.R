@@ -6,7 +6,7 @@ peptides <- read.csv("polystest_pep_res.csv")
 proteins <- read.csv("polystest_prot_res.csv")
 exp_design <- read.csv("exp_design.txt", sep="\t")
 colnames(exp_design)[1:2] <- c("raw_file", "exp_condition")
-write.csv(exp_design, "exp_design.txt", sep="\t")
+write.table(exp_design, "exp_design.txt", sep="\t", rownames=F)
 
 # Converting column names
 colnames(peptides) <- sub("^psm_count_", "number_of_psms_", colnames(peptides))
