@@ -12,7 +12,7 @@ write.csv(exp_design, "exp_design.txt", sep="\t")
 colnames(peptides) <- sub("^psm_count_", "number_of_psms_", colnames(peptides))
 colnames(peptides) <- sub("^log\\.ratios\\.", "log_ratios_", colnames(peptides))
 for (s in unique(exp_design$exp_condition)) colnames(peptides) <- sub(paste0("^X",s,"\\."), paste0("abundance_",s,"_"), colnames(peptides))
-colnames(peptides) <- sub("^FDR\\.PolySTest\\.X\\.", "differential_regulation_", colnames(peptides))
+colnames(peptides) <- sub("^FDR\\.PolySTest\\.X", "differential_regulation_", colnames(peptides))
 
 #Creating modified sequences
 modified_peptides <- strsplit(peptides$modifications, "; ")
@@ -56,7 +56,7 @@ colnames(proteins)
 colnames(proteins) <- sub("^peptides_count_", "number_of_peptides_", colnames(proteins))
 colnames(proteins) <- sub("^log\\.ratios\\.", "log_ratios_", colnames(proteins))
 for (s in unique(exp_design$exp_condition)) colnames(proteins) <- sub(paste0("^X",s,"\\."), paste0("abundance_",s,"_"), colnames(proteins))
-colnames(proteins) <- sub("^FDR\\.PolySTest\\.X\\.", "differential_regulation_", colnames(proteins))
+colnames(proteins) <- sub("^FDR\\.PolySTest\\.X", "differential_regulation_", colnames(proteins))
 stand_prots <- data.frame(protein_group=proteins$samesets_accessions, 
                           proteins[, grep("^number_of_peptides", colnames(proteins))],
                           proteins[, grep("^abundance_", colnames(proteins))],
