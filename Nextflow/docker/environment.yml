@@ -1,0 +1,13 @@
+name: nf-core-proline-labelfree
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - searchgui=3.3.10
+  - unzip=6.0
+  - polystest=1.01
+  - r-stringi=1.7.6
+  - r-matrixstats=0.62.0
+  - r-stringr=1.4.0
+  - r-jsonlite=1.8.0

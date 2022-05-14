@@ -1,0 +1,285 @@
+<!doctype html>
+<!--
+  ~ Copyright 2013-2019, Centre for Genomic Regulation (CRG)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Cscript src='" + prot + "code.jquery.com/jquery-latest.min.js' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "d3js.org/d3.v3.min.js' charset='utf-8' type='text/javascript' %3E%3C/script%3E"));
+document.write(unescape("%3Cscript src='" + prot + "cdn.rawgit.com/nextflow-io/d3-timeline/82622c4cc35bac7283b3a317826b0709ac1ae476/src/d3-timeline.js' type='text/javascript' %3E%3C/script%3E"));
+</script>
+<style type="text/css">
+* {
+  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.axis path,
+.axis line {
+fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+div#timeline g text {
+  font-size: 13px;
+}
+
+text.timeline-label {
+  font-size: 13px;
+}
+
+#timeline2 .axis {
+  transform: translate(0px,30px);
+  -ms-transform: translate(0px,30px); /* IE 9 */
+  -webkit-transform: translate(0px,30px); /* Safari and Chrome */
+  -o-transform: translate(0px,30px); /* Opera */
+  -moz-transform: translate(0px,30px); /* Firefox */
+}
+
+.coloredDiv {
+  height:20px; width:20px; float:left;
+}
+
+#footer {
+  padding-top: 3em; color: #bfbfbf; font-size: 13px;
+}
+
+#footer a:visited {
+  color: #bfbfbf;
+  text-decoration: underline;
+}
+</style>
+<script type="text/javascript">
+var handler=null;
+// see https://github.com/mbostock/d3/wiki/Ordinal-Scales#category20c
+var colors = d3.scale.category20c().domain(d3.range(0,20)).range()
+
+function c0(index) { return "#9c9c9c"; }
+function c1(index) { return "#bdbdbd"; }
+function c2(index) { return colors[index % 16]; } // <-- note: uses only the first 16 colors
+
+var elapsed="3h 39m 39s"
+var beginningMillis=1644333127409;
+var endingMillis=1644346305963;
+var data=[
+{"label": "convert_raw_to_mzdb (19)", "times": [{"starting_time": 1644333128598, "ending_time": 1644333128609, "color":c1(0)}, {"starting_time": 1644333128609, "ending_time": 1644333328641, "color":c2(0), "label": "3m 22s \/ 2.4 GB"}, {"starting_time": 1644333328641, "ending_time": 1644333330278, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (11)", "times": [{"starting_time": 1644333330302, "ending_time": 1644333330378, "color":c1(0)}, {"starting_time": 1644333330378, "ending_time": 1644333544922, "color":c2(0), "label": "3m 36s \/ 2.5 GB"}, {"starting_time": 1644333544922, "ending_time": 1644333546220, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (1)", "times": [{"starting_time": 1644333546233, "ending_time": 1644333546319, "color":c1(0)}, {"starting_time": 1644333546319, "ending_time": 1644333754432, "color":c2(0), "label": "3m 30s \/ 2.4 GB"}, {"starting_time": 1644333754432, "ending_time": 1644333755868, "color":c1(0)}]},
+{"label": "create_decoy_database (1)", "times": [{"starting_time": 1644333755879, "ending_time": 1644333755968, "color":c1(1)}, {"starting_time": 1644333755968, "ending_time": 1644333758677, "color":c2(1), "label": "4.2s \/ 445 MB"}, {"starting_time": 1644333758677, "ending_time": 1644333760038, "color":c1(1)}]},
+{"label": "convert_raw_to_mzdb (16)", "times": [{"starting_time": 1644333760052, "ending_time": 1644333760138, "color":c1(0)}, {"starting_time": 1644333760138, "ending_time": 1644333967790, "color":c2(0), "label": "3m 29s \/ 2.4 GB"}, {"starting_time": 1644333967790, "ending_time": 1644333969218, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (10)", "times": [{"starting_time": 1644333969229, "ending_time": 1644333969318, "color":c1(0)}, {"starting_time": 1644333969318, "ending_time": 1644334177005, "color":c2(0), "label": "3m 29s \/ 2.5 GB"}, {"starting_time": 1644334177005, "ending_time": 1644334178363, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (25)", "times": [{"starting_time": 1644334178373, "ending_time": 1644334178463, "color":c1(0)}, {"starting_time": 1644334178463, "ending_time": 1644334388762, "color":c2(0), "label": "3m 32s \/ 2.4 GB"}, {"starting_time": 1644334388762, "ending_time": 1644334390062, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (14)", "times": [{"starting_time": 1644334390074, "ending_time": 1644334390162, "color":c1(0)}, {"starting_time": 1644334390162, "ending_time": 1644334597322, "color":c2(0), "label": "3m 29s \/ 2.4 GB"}, {"starting_time": 1644334597322, "ending_time": 1644334598652, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (9)", "times": [{"starting_time": 1644334598662, "ending_time": 1644334598752, "color":c1(0)}, {"starting_time": 1644334598752, "ending_time": 1644334807002, "color":c2(0), "label": "3m 30s \/ 2.4 GB"}, {"starting_time": 1644334807002, "ending_time": 1644334808362, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (21)", "times": [{"starting_time": 1644334808371, "ending_time": 1644334808462, "color":c1(0)}, {"starting_time": 1644334808462, "ending_time": 1644335018931, "color":c2(0), "label": "3m 32s \/ 2.4 GB"}, {"starting_time": 1644335018931, "ending_time": 1644335020262, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (22)", "times": [{"starting_time": 1644335020271, "ending_time": 1644335020362, "color":c1(0)}, {"starting_time": 1644335020362, "ending_time": 1644335226606, "color":c2(0), "label": "3m 28s \/ 2.3 GB"}, {"starting_time": 1644335226606, "ending_time": 1644335227907, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (2)", "times": [{"starting_time": 1644335227915, "ending_time": 1644335228007, "color":c1(0)}, {"starting_time": 1644335228007, "ending_time": 1644335431855, "color":c2(0), "label": "3m 25s \/ 2.4 GB"}, {"starting_time": 1644335431855, "ending_time": 1644335433217, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (26)", "times": [{"starting_time": 1644335433225, "ending_time": 1644335433318, "color":c1(0)}, {"starting_time": 1644335433318, "ending_time": 1644335641302, "color":c2(0), "label": "3m 29s \/ 2.4 GB"}, {"starting_time": 1644335641302, "ending_time": 1644335642651, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (8)", "times": [{"starting_time": 1644335642659, "ending_time": 1644335642751, "color":c1(0)}, {"starting_time": 1644335642751, "ending_time": 1644335839558, "color":c2(0), "label": "3m 18s \/ 2.3 GB"}, {"starting_time": 1644335839558, "ending_time": 1644335840833, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (12)", "times": [{"starting_time": 1644335840842, "ending_time": 1644335840933, "color":c1(0)}, {"starting_time": 1644335840933, "ending_time": 1644336045633, "color":c2(0), "label": "3m 26s \/ 2.4 GB"}, {"starting_time": 1644336045633, "ending_time": 1644336046933, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (15)", "times": [{"starting_time": 1644336046947, "ending_time": 1644336047033, "color":c1(0)}, {"starting_time": 1644336047033, "ending_time": 1644336237255, "color":c2(0), "label": "3m 12s \/ 2.3 GB"}, {"starting_time": 1644336237255, "ending_time": 1644336238594, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (5)", "times": [{"starting_time": 1644336238604, "ending_time": 1644336238692, "color":c1(0)}, {"starting_time": 1644336238692, "ending_time": 1644336439995, "color":c2(0), "label": "3m 23s \/ 2.3 GB"}, {"starting_time": 1644336439995, "ending_time": 1644336441301, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (20)", "times": [{"starting_time": 1644336441315, "ending_time": 1644336441400, "color":c1(0)}, {"starting_time": 1644336441400, "ending_time": 1644336662596, "color":c2(0), "label": "3m 43s \/ 2.4 GB"}, {"starting_time": 1644336662596, "ending_time": 1644336663872, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (6)", "times": [{"starting_time": 1644336663881, "ending_time": 1644336663972, "color":c1(0)}, {"starting_time": 1644336663972, "ending_time": 1644336866520, "color":c2(0), "label": "3m 24s \/ 2.4 GB"}, {"starting_time": 1644336866520, "ending_time": 1644336867737, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (24)", "times": [{"starting_time": 1644336867745, "ending_time": 1644336867837, "color":c1(0)}, {"starting_time": 1644336867837, "ending_time": 1644337107835, "color":c2(0), "label": "4m 1s \/ 2.4 GB"}, {"starting_time": 1644337107835, "ending_time": 1644337109106, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (23)", "times": [{"starting_time": 1644337109113, "ending_time": 1644337109207, "color":c1(0)}, {"starting_time": 1644337109207, "ending_time": 1644337340641, "color":c2(0), "label": "3m 53s \/ 2.4 GB"}, {"starting_time": 1644337340641, "ending_time": 1644337341937, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (17)", "times": [{"starting_time": 1644337341946, "ending_time": 1644337342037, "color":c1(0)}, {"starting_time": 1644337342037, "ending_time": 1644337563372, "color":c2(0), "label": "3m 43s \/ 2.4 GB"}, {"starting_time": 1644337563372, "ending_time": 1644337564706, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (4)", "times": [{"starting_time": 1644337564712, "ending_time": 1644337564806, "color":c1(0)}, {"starting_time": 1644337564806, "ending_time": 1644337761972, "color":c2(0), "label": "3m 19s \/ 2.4 GB"}, {"starting_time": 1644337761972, "ending_time": 1644337763243, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (27)", "times": [{"starting_time": 1644337763252, "ending_time": 1644337763343, "color":c1(0)}, {"starting_time": 1644337763343, "ending_time": 1644337970831, "color":c2(0), "label": "3m 29s \/ 2.4 GB"}, {"starting_time": 1644337970831, "ending_time": 1644337972169, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (18)", "times": [{"starting_time": 1644337972179, "ending_time": 1644337972269, "color":c1(0)}, {"starting_time": 1644337972269, "ending_time": 1644338170751, "color":c2(0), "label": "3m 20s \/ 2.4 GB"}, {"starting_time": 1644338170751, "ending_time": 1644338172070, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (13)", "times": [{"starting_time": 1644338172079, "ending_time": 1644338172170, "color":c1(0)}, {"starting_time": 1644338172170, "ending_time": 1644338380201, "color":c2(0), "label": "3m 29s \/ 2.4 GB"}, {"starting_time": 1644338380201, "ending_time": 1644338381554, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (3)", "times": [{"starting_time": 1644338381565, "ending_time": 1644338381654, "color":c1(0)}, {"starting_time": 1644338381654, "ending_time": 1644338590243, "color":c2(0), "label": "3m 30s \/ 2.4 GB"}, {"starting_time": 1644338590243, "ending_time": 1644338591529, "color":c1(0)}]},
+{"label": "convert_raw_to_mzdb (7)", "times": [{"starting_time": 1644338591537, "ending_time": 1644338591628, "color":c1(0)}, {"starting_time": 1644338591628, "ending_time": 1644338826762, "color":c2(0), "label": "3m 57s \/ 2.4 GB"}, {"starting_time": 1644338826762, "ending_time": 1644338828071, "color":c1(0)}]},
+{"label": "convert_mzdb_to_mgf (1)", "times": [{"starting_time": 1644338828080, "ending_time": 1644338828171, "color":c1(2)}, {"starting_time": 1644338828171, "ending_time": 1644338848269, "color":c2(2), "label": "21.6s \/ 653.7 MB"}, {"starting_time": 1644338848269, "ending_time": 1644338849643, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (2)", "times": [{"starting_time": 1644338849651, "ending_time": 1644338849743, "color":c1(2)}, {"starting_time": 1644338849743, "ending_time": 1644338870924, "color":c2(2), "label": "22.6s \/ 658.8 MB"}, {"starting_time": 1644338870924, "ending_time": 1644338872245, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (3)", "times": [{"starting_time": 1644338872252, "ending_time": 1644338872344, "color":c1(2)}, {"starting_time": 1644338872344, "ending_time": 1644338893938, "color":c2(2), "label": "23s \/ 648.9 MB"}, {"starting_time": 1644338893938, "ending_time": 1644338895279, "color":c1(2)}]},
+{"label": "create_searchgui_paramfile (1)", "times": [{"starting_time": 1644338895288, "ending_time": 1644338895378, "color":c1(3)}, {"starting_time": 1644338895378, "ending_time": 1644338897187, "color":c2(3), "label": "3.2s \/ 173.9 MB"}, {"starting_time": 1644338897187, "ending_time": 1644338898497, "color":c1(3)}]},
+{"label": "convert_mzdb_to_mgf (4)", "times": [{"starting_time": 1644338898504, "ending_time": 1644338898597, "color":c1(2)}, {"starting_time": 1644338898597, "ending_time": 1644338919410, "color":c2(2), "label": "22.2s \/ 635.9 MB"}, {"starting_time": 1644338919410, "ending_time": 1644338920736, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (5)", "times": [{"starting_time": 1644338920743, "ending_time": 1644338920836, "color":c1(2)}, {"starting_time": 1644338920836, "ending_time": 1644338941043, "color":c2(2), "label": "21.8s \/ 652.8 MB"}, {"starting_time": 1644338941043, "ending_time": 1644338942497, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (6)", "times": [{"starting_time": 1644338942504, "ending_time": 1644338942597, "color":c1(2)}, {"starting_time": 1644338942597, "ending_time": 1644338962803, "color":c2(2), "label": "21.6s \/ 658 MB"}, {"starting_time": 1644338962803, "ending_time": 1644338964115, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (7)", "times": [{"starting_time": 1644338964123, "ending_time": 1644338964215, "color":c1(2)}, {"starting_time": 1644338964215, "ending_time": 1644338983466, "color":c2(2), "label": "20.6s \/ 665.8 MB"}, {"starting_time": 1644338983466, "ending_time": 1644338984735, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (8)", "times": [{"starting_time": 1644338984741, "ending_time": 1644338984835, "color":c1(2)}, {"starting_time": 1644338984835, "ending_time": 1644339004682, "color":c2(2), "label": "21.3s \/ 666.6 MB"}, {"starting_time": 1644339004682, "ending_time": 1644339006060, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (9)", "times": [{"starting_time": 1644339006066, "ending_time": 1644339006160, "color":c1(2)}, {"starting_time": 1644339006160, "ending_time": 1644339027313, "color":c2(2), "label": "22.6s \/ 661.6 MB"}, {"starting_time": 1644339027313, "ending_time": 1644339028687, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (10)", "times": [{"starting_time": 1644339028695, "ending_time": 1644339028787, "color":c1(2)}, {"starting_time": 1644339028787, "ending_time": 1644339047831, "color":c2(2), "label": "20.5s \/ 668.1 MB"}, {"starting_time": 1644339047831, "ending_time": 1644339049204, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (11)", "times": [{"starting_time": 1644339049214, "ending_time": 1644339049304, "color":c1(2)}, {"starting_time": 1644339049304, "ending_time": 1644339069464, "color":c2(2), "label": "21.6s \/ 659.9 MB"}, {"starting_time": 1644339069464, "ending_time": 1644339070845, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (12)", "times": [{"starting_time": 1644339070852, "ending_time": 1644339070945, "color":c1(2)}, {"starting_time": 1644339070945, "ending_time": 1644339092963, "color":c2(2), "label": "23.5s \/ 768.9 MB"}, {"starting_time": 1644339092963, "ending_time": 1644339094381, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (13)", "times": [{"starting_time": 1644339094389, "ending_time": 1644339094481, "color":c1(2)}, {"starting_time": 1644339094481, "ending_time": 1644339114469, "color":c2(2), "label": "21.4s \/ 661.1 MB"}, {"starting_time": 1644339114469, "ending_time": 1644339115837, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (14)", "times": [{"starting_time": 1644339115844, "ending_time": 1644339115938, "color":c1(2)}, {"starting_time": 1644339115938, "ending_time": 1644339137536, "color":c2(2), "label": "23.1s \/ 665.2 MB"}, {"starting_time": 1644339137536, "ending_time": 1644339138907, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (15)", "times": [{"starting_time": 1644339138913, "ending_time": 1644339139007, "color":c1(2)}, {"starting_time": 1644339139007, "ending_time": 1644339157996, "color":c2(2), "label": "20.4s \/ 664.2 MB"}, {"starting_time": 1644339157996, "ending_time": 1644339159323, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (16)", "times": [{"starting_time": 1644339159331, "ending_time": 1644339159423, "color":c1(2)}, {"starting_time": 1644339159423, "ending_time": 1644339179039, "color":c2(2), "label": "21s \/ 652 MB"}, {"starting_time": 1644339179039, "ending_time": 1644339180376, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (17)", "times": [{"starting_time": 1644339180384, "ending_time": 1644339180476, "color":c1(2)}, {"starting_time": 1644339180476, "ending_time": 1644339202711, "color":c2(2), "label": "23.7s \/ 773.1 MB"}, {"starting_time": 1644339202711, "ending_time": 1644339204087, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (18)", "times": [{"starting_time": 1644339204096, "ending_time": 1644339204187, "color":c1(2)}, {"starting_time": 1644339204187, "ending_time": 1644339224391, "color":c2(2), "label": "21.6s \/ 649.9 MB"}, {"starting_time": 1644339224391, "ending_time": 1644339225694, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (19)", "times": [{"starting_time": 1644339225702, "ending_time": 1644339225794, "color":c1(2)}, {"starting_time": 1644339225794, "ending_time": 1644339247433, "color":c2(2), "label": "23.1s \/ 660 MB"}, {"starting_time": 1644339247433, "ending_time": 1644339248805, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (20)", "times": [{"starting_time": 1644339248812, "ending_time": 1644339248905, "color":c1(2)}, {"starting_time": 1644339248905, "ending_time": 1644339268393, "color":c2(2), "label": "20.9s \/ 660.8 MB"}, {"starting_time": 1644339268393, "ending_time": 1644339269744, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (21)", "times": [{"starting_time": 1644339269752, "ending_time": 1644339269844, "color":c1(2)}, {"starting_time": 1644339269844, "ending_time": 1644339289605, "color":c2(2), "label": "21.3s \/ 656 MB"}, {"starting_time": 1644339289605, "ending_time": 1644339291015, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (22)", "times": [{"starting_time": 1644339291021, "ending_time": 1644339291115, "color":c1(2)}, {"starting_time": 1644339291115, "ending_time": 1644339308637, "color":c2(2), "label": "19s \/ 689.9 MB"}, {"starting_time": 1644339308637, "ending_time": 1644339309988, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (23)", "times": [{"starting_time": 1644339309997, "ending_time": 1644339310088, "color":c1(2)}, {"starting_time": 1644339310088, "ending_time": 1644339328799, "color":c2(2), "label": "20.1s \/ 716.2 MB"}, {"starting_time": 1644339328799, "ending_time": 1644339330117, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (24)", "times": [{"starting_time": 1644339330125, "ending_time": 1644339330217, "color":c1(2)}, {"starting_time": 1644339330217, "ending_time": 1644339348331, "color":c2(2), "label": "19.5s \/ 696.3 MB"}, {"starting_time": 1644339348331, "ending_time": 1644339349623, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (25)", "times": [{"starting_time": 1644339349631, "ending_time": 1644339349723, "color":c1(2)}, {"starting_time": 1644339349723, "ending_time": 1644339367852, "color":c2(2), "label": "19.5s \/ 699.1 MB"}, {"starting_time": 1644339367852, "ending_time": 1644339369176, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (26)", "times": [{"starting_time": 1644339369183, "ending_time": 1644339369276, "color":c1(2)}, {"starting_time": 1644339369276, "ending_time": 1644339388386, "color":c2(2), "label": "20.5s \/ 670.2 MB"}, {"starting_time": 1644339388386, "ending_time": 1644339389684, "color":c1(2)}]},
+{"label": "convert_mzdb_to_mgf (27)", "times": [{"starting_time": 1644339389691, "ending_time": 1644339389784, "color":c1(2)}, {"starting_time": 1644339389784, "ending_time": 1644339410159, "color":c2(2), "label": "21.7s \/ 686.8 MB"}, {"starting_time": 1644339410159, "ending_time": 1644339411417, "color":c1(2)}]},
+{"label": "set_proline_exp_design (1)", "times": [{"starting_time": 1644339411424, "ending_time": 1644339411517, "color":c1(4)}, {"starting_time": 1644339411517, "ending_time": 1644339411534, "color":c2(4), "label": "1.4s \/ 0"}, {"starting_time": 1644339411534, "ending_time": 1644339412850, "color":c1(4)}]},
+{"label": "run_searchgui_search (11)", "times": [{"starting_time": 1644339412857, "ending_time": 1644339412950, "color":c1(5)}, {"starting_time": 1644339412950, "ending_time": 1644339490438, "color":c2(5), "label": "1m 19s \/ 975.2 MB"}, {"starting_time": 1644339490438, "ending_time": 1644339491769, "color":c1(5)}]},
+{"label": "run_searchgui_search (24)", "times": [{"starting_time": 1644339491776, "ending_time": 1644339491869, "color":c1(5)}, {"starting_time": 1644339491869, "ending_time": 1644339571368, "color":c2(5), "label": "1m 21s \/ 960.8 MB"}, {"starting_time": 1644339571368, "ending_time": 1644339572646, "color":c1(5)}]},
+{"label": "run_searchgui_search (23)", "times": [{"starting_time": 1644339572654, "ending_time": 1644339572747, "color":c1(5)}, {"starting_time": 1644339572747, "ending_time": 1644339654051, "color":c2(5), "label": "1m 23s \/ 974.2 MB"}, {"starting_time": 1644339654051, "ending_time": 1644339655320, "color":c1(5)}]},
+{"label": "run_searchgui_search (21)", "times": [{"starting_time": 1644339655328, "ending_time": 1644339655420, "color":c1(5)}, {"starting_time": 1644339655420, "ending_time": 1644339731368, "color":c2(5), "label": "1m 17s \/ 984.5 MB"}, {"starting_time": 1644339731368, "ending_time": 1644339732606, "color":c1(5)}]},
+{"label": "run_searchgui_search (25)", "times": [{"starting_time": 1644339732614, "ending_time": 1644339732707, "color":c1(5)}, {"starting_time": 1644339732707, "ending_time": 1644339810894, "color":c2(5), "label": "1m 20s \/ 1004.8 MB"}, {"starting_time": 1644339810894, "ending_time": 1644339812126, "color":c1(5)}]},
+{"label": "run_searchgui_search (26)", "times": [{"starting_time": 1644339812134, "ending_time": 1644339812226, "color":c1(5)}, {"starting_time": 1644339812226, "ending_time": 1644339890938, "color":c2(5), "label": "1m 20s \/ 920.5 MB"}, {"starting_time": 1644339890938, "ending_time": 1644339892245, "color":c1(5)}]},
+{"label": "run_searchgui_search (5)", "times": [{"starting_time": 1644339892253, "ending_time": 1644339892346, "color":c1(5)}, {"starting_time": 1644339892346, "ending_time": 1644339969990, "color":c2(5), "label": "1m 19s \/ 934.8 MB"}, {"starting_time": 1644339969990, "ending_time": 1644339971340, "color":c1(5)}]},
+{"label": "run_searchgui_search (12)", "times": [{"starting_time": 1644339971346, "ending_time": 1644339971439, "color":c1(5)}, {"starting_time": 1644339971439, "ending_time": 1644340052612, "color":c2(5), "label": "1m 23s \/ 1 GB"}, {"starting_time": 1644340052612, "ending_time": 1644340053937, "color":c1(5)}]},
+{"label": "run_searchgui_search (14)", "times": [{"starting_time": 1644340053944, "ending_time": 1644340054038, "color":c1(5)}, {"starting_time": 1644340054038, "ending_time": 1644340136239, "color":c2(5), "label": "1m 24s \/ 982.3 MB"}, {"starting_time": 1644340136239, "ending_time": 1644340137615, "color":c1(5)}]},
+{"label": "run_searchgui_search (22)", "times": [{"starting_time": 1644340137628, "ending_time": 1644340137715, "color":c1(5)}, {"starting_time": 1644340137715, "ending_time": 1644340214640, "color":c2(5), "label": "1m 18s \/ 960.5 MB"}, {"starting_time": 1644340214640, "ending_time": 1644340216074, "color":c1(5)}]},
+{"label": "run_searchgui_search (9)", "times": [{"starting_time": 1644340216082, "ending_time": 1644340216174, "color":c1(5)}, {"starting_time": 1644340216174, "ending_time": 1644340297945, "color":c2(5), "label": "1m 23s \/ 1009 MB"}, {"starting_time": 1644340297945, "ending_time": 1644340299181, "color":c1(5)}]},
+{"label": "run_searchgui_search (13)", "times": [{"starting_time": 1644340299189, "ending_time": 1644340299281, "color":c1(5)}, {"starting_time": 1644340299281, "ending_time": 1644340378393, "color":c2(5), "label": "1m 20s \/ 928.4 MB"}, {"starting_time": 1644340378393, "ending_time": 1644340379688, "color":c1(5)}]},
+{"label": "run_searchgui_search (10)", "times": [{"starting_time": 1644340379694, "ending_time": 1644340379788, "color":c1(5)}, {"starting_time": 1644340379788, "ending_time": 1644340457381, "color":c2(5), "label": "1m 19s \/ 959.2 MB"}, {"starting_time": 1644340457381, "ending_time": 1644340458626, "color":c1(5)}]},
+{"label": "run_searchgui_search (20)", "times": [{"starting_time": 1644340458633, "ending_time": 1644340458726, "color":c1(5)}, {"starting_time": 1644340458726, "ending_time": 1644340535408, "color":c2(5), "label": "1m 18s \/ 966.3 MB"}, {"starting_time": 1644340535408, "ending_time": 1644340536712, "color":c1(5)}]},
+{"label": "run_searchgui_search (4)", "times": [{"starting_time": 1644340536724, "ending_time": 1644340536812, "color":c1(5)}, {"starting_time": 1644340536812, "ending_time": 1644340613796, "color":c2(5), "label": "1m 18s \/ 973.1 MB"}, {"starting_time": 1644340613796, "ending_time": 1644340615102, "color":c1(5)}]},
+{"label": "run_searchgui_search (7)", "times": [{"starting_time": 1644340615110, "ending_time": 1644340615202, "color":c1(5)}, {"starting_time": 1644340615202, "ending_time": 1644340692743, "color":c2(5), "label": "1m 19s \/ 945.3 MB"}, {"starting_time": 1644340692743, "ending_time": 1644340694034, "color":c1(5)}]},
+{"label": "run_searchgui_search (15)", "times": [{"starting_time": 1644340694044, "ending_time": 1644340694134, "color":c1(5)}, {"starting_time": 1644340694134, "ending_time": 1644340770487, "color":c2(5), "label": "1m 18s \/ 914.9 MB"}, {"starting_time": 1644340770487, "ending_time": 1644340771823, "color":c1(5)}]},
+{"label": "run_searchgui_search (16)", "times": [{"starting_time": 1644340771834, "ending_time": 1644340771922, "color":c1(5)}, {"starting_time": 1644340771922, "ending_time": 1644340846876, "color":c2(5), "label": "1m 16s \/ 947.8 MB"}, {"starting_time": 1644340846876, "ending_time": 1644340848209, "color":c1(5)}]},
+{"label": "run_searchgui_search (18)", "times": [{"starting_time": 1644340848216, "ending_time": 1644340848309, "color":c1(5)}, {"starting_time": 1644340848309, "ending_time": 1644340924195, "color":c2(5), "label": "1m 17s \/ 947.5 MB"}, {"starting_time": 1644340924195, "ending_time": 1644340925492, "color":c1(5)}]},
+{"label": "run_searchgui_search (1)", "times": [{"starting_time": 1644340925500, "ending_time": 1644340925592, "color":c1(5)}, {"starting_time": 1644340925592, "ending_time": 1644341000993, "color":c2(5), "label": "1m 17s \/ 965.5 MB"}, {"starting_time": 1644341000993, "ending_time": 1644341002282, "color":c1(5)}]},
+{"label": "run_searchgui_search (8)", "times": [{"starting_time": 1644341002289, "ending_time": 1644341002382, "color":c1(5)}, {"starting_time": 1644341002382, "ending_time": 1644341080250, "color":c2(5), "label": "1m 19s \/ 933.4 MB"}, {"starting_time": 1644341080250, "ending_time": 1644341081505, "color":c1(5)}]},
+{"label": "run_searchgui_search (3)", "times": [{"starting_time": 1644341081512, "ending_time": 1644341081605, "color":c1(5)}, {"starting_time": 1644341081605, "ending_time": 1644341173863, "color":c2(5), "label": "1m 34s \/ 993.9 MB"}, {"starting_time": 1644341173863, "ending_time": 1644341175143, "color":c1(5)}]},
+{"label": "run_searchgui_search (17)", "times": [{"starting_time": 1644341175152, "ending_time": 1644341175243, "color":c1(5)}, {"starting_time": 1644341175243, "ending_time": 1644341271026, "color":c2(5), "label": "1m 37s \/ 1 GB"}, {"starting_time": 1644341271026, "ending_time": 1644341272387, "color":c1(5)}]},
+{"label": "run_searchgui_search (19)", "times": [{"starting_time": 1644341272395, "ending_time": 1644341272487, "color":c1(5)}, {"starting_time": 1644341272487, "ending_time": 1644341366957, "color":c2(5), "label": "1m 36s \/ 980 MB"}, {"starting_time": 1644341366957, "ending_time": 1644341368312, "color":c1(5)}]},
+{"label": "run_searchgui_search (6)", "times": [{"starting_time": 1644341368318, "ending_time": 1644341368412, "color":c1(5)}, {"starting_time": 1644341368412, "ending_time": 1644341459348, "color":c2(5), "label": "1m 32s \/ 967 MB"}, {"starting_time": 1644341459348, "ending_time": 1644341460630, "color":c1(5)}]},
+{"label": "run_searchgui_search (27)", "times": [{"starting_time": 1644341460637, "ending_time": 1644341460730, "color":c1(5)}, {"starting_time": 1644341460730, "ending_time": 1644341554821, "color":c2(5), "label": "1m 36s \/ 938.3 MB"}, {"starting_time": 1644341554821, "ending_time": 1644341556167, "color":c1(5)}]},
+{"label": "run_searchgui_search (2)", "times": [{"starting_time": 1644341556174, "ending_time": 1644341556268, "color":c1(5)}, {"starting_time": 1644341556268, "ending_time": 1644341649439, "color":c2(5), "label": "1m 35s \/ 942 MB"}, {"starting_time": 1644341649439, "ending_time": 1644341650835, "color":c1(5)}]},
+{"label": "set_proline_inputfiles", "times": [{"starting_time": 1644341650863, "ending_time": 1644341650935, "color":c1(6)}, {"starting_time": 1644341650935, "ending_time": 1644341650951, "color":c2(6), "label": "1.4s \/ 0"}, {"starting_time": 1644341650951, "ending_time": 1644341652289, "color":c1(6)}]},
+{"label": "run_proline (1)", "times": [{"starting_time": 1644341652329, "ending_time": 1644341652389, "color":c1(7)}, {"starting_time": 1644341652389, "ending_time": 1644343721963, "color":c2(7), "label": "34m 31s \/ 13.7 GB"}, {"starting_time": 1644343721963, "ending_time": 1644343723594, "color":c1(7)}]},
+{"label": "run_polystest (1)", "times": [{"starting_time": 1644343723705, "ending_time": 1644343723795, "color":c1(8)}, {"starting_time": 1644343723795, "ending_time": 1644346303830, "color":c2(8), "label": "43m 1s \/ 1004.1 MB"}, {"starting_time": 1644346303830, "ending_time": 1644346305173, "color":c1(8)}]}
+]
+
+
+function getTickFormat() {
+  var MIN = 1000 * 60
+  var HOUR = MIN * 60
+  var DAY = HOUR * 24
+  var delta = (endingMillis - beginningMillis)
+
+  if( delta < 2 * MIN ) {
+    return {
+      format: d3.time.format("%S"),
+      tickTime: d3.time.seconds,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * HOUR ) {
+    return {
+      format: d3.time.format("%M"),
+      tickTime: d3.time.minutes,
+      tickInterval: 5,
+      tickSize: 6
+    }
+  }
+
+  if( delta < 2 * DAY ) {
+    return {
+      format: d3.time.format("%H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 1,
+      tickSize: 6
+    }
+  }
+
+  if( delta <= 7 * DAY ) {
+    return {
+      format: d3.time.format("%b %e %H:%M"),
+      tickTime: d3.time.hours,
+      tickInterval: 6,
+      tickSize: 6
+    }
+  }
+
+  return {
+    format: d3.time.format("%b %e"),
+    tickTime: d3.time.days,
+    tickInterval: 1,
+    tickSize: 6
+  }
+}
+
+function getLabelMargin(scale) {
+    $('<span class="labelSpan" style="display: none"></span>').appendTo('body');
+
+    var labelMargin = 0
+    $.each(data, function (key, value) {
+      labelMargin = Math.max(labelMargin, $('.labelSpan').html(value.label).width());
+    });
+
+    $('.labelSpan').remove();
+
+    return (labelMargin * scale);
+}
+
+function render() {
+  handler=null;
+  $("#timeline").empty()
+  $('#label_elapsed').text(elapsed)
+  $('#label_launch').text( d3.time.format('%d %b %Y %H:%M')(new Date(beginningMillis)) )
+
+  var width = $(window).width();
+  var chart = d3.timeline()
+    .stack() // toggles graph stacking
+    .margin({left:getLabelMargin(0.85), right:100, top:0, bottom:0})
+    .tickFormat( getTickFormat() )
+    .rowSeperators('#f5f5f5')
+    .showTimeAxisTick()
+    ;
+  var svg = d3.select("#timeline").append("svg").attr("width", width).datum(data).call(chart);
+}
+
+function hrz() {
+if( handler != null ) clearTimeout(handler)
+  handler = setTimeout(render, 150);
+}
+
+$(document).ready(render)
+$(window).resize(hrz); // resize the applet on window resize
+</script>
+</head>
+
+<body>
+<div>
+  <h3>Processes execution timeline</h3>
+  <p>
+    Launch time: <span id='label_launch'> </span><br>
+    Elapsed time: <span id='label_elapsed'> </span><br>
+    Legend: job wall time / memory usage (RAM) <span id='label_legend'> </span>
+  </p>
+  <div id="timeline"></div>
+</div>
+
+<div id='footer'>
+  Created with Nextflow -- <a href='http://www.nextflow.io' target='_blank'>http://nextflow.io</a>
+</div>
+
+<script type="text/javascript">
+var prot = (("https:" == document.location.protocol) ? "https://" : "http://");
+document.write(unescape("%3Clink href='" + prot + "fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css' %3E%3C/link%3E"));
+</script>
+</body>
+</html>

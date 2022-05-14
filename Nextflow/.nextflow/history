@@ -1,2 +1,0 @@
-2020-12-10 17:18:46	7m	adoring_faggin	ERR	ff5a8ddddc232da34ccd71367b17bdbb	a728b5bb-4d00-401f-93de-42df457c3073	nextflow run main.nf -profile test,docker
-2020-12-10 17:27:04	2m 47s	special_noether	OK	ff5a8ddddc232da34ccd71367b17bdbb	a728b5bb-4d00-401f-93de-42df457c3073	nextflow run main.nf -profile test,docker -resume
