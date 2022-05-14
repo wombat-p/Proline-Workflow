@@ -147,12 +147,13 @@ input_fasta.into { fasta_create_decoy; fasta_searchgui; fasta_qc }
 /* 
  * Create a channel for proline experimental design file
  */
-input_exp_design =  Channel.fromPath(params.experiment_design)
+input_exp_design =  Channel.fromPath( params.experiment_design )
 if (params.experiment_design == "none") {
   log.warn "No experimental design! All raw files will be considered being from the one and the same experimental condition."
 } else if(!(file(params.experiment_design).exists())) {
   log.error "File with experimental design does not exit"; exit 1
 }
+
 
 /*
  * Create a channel for Proline LFQ parameter file
