@@ -13,6 +13,8 @@ RUN apt-get update; apt-get install -y curl zip unzip ; apt-get clean
 
 ### Files will be changed by searchgui and thus need to be readable by any user
 RUN chmod -R a+rwx /opt/conda/envs/nf-core-proline-labelfree/share/searchgui-*/resources
+RUN mv /opt/conda/envs/nf-core-proline-labelfree/share/searchgui-*/resources /home/; \
+    ln -s /home/resources /opt/conda/envs/nf-core-proline-labelfree/share/searchgui-*/
 
 ### TODO: explain why this mkdir is required
 RUN update-ca-certificates && mkdir /usr/share/man/man1
