@@ -165,8 +165,7 @@ input_proline_param =  Channel.fromPath( params.lfq_param )
  * STEP 1.1 - Convert Thermo RAW files to mzDB
  */
 process convert_raw_to_mzdb {
-  label 'process_low'
-  label 'process_single_thread'
+  label 'process_medium'
   
   publishDir "${params.outdir}/mzdb", mode:'copy'
 
@@ -189,8 +188,7 @@ process convert_raw_to_mzdb {
  * STEP 1.2 - Convert mzDB files to MGF
  */
 process convert_mzdb_to_mgf {
-  label 'process_low'
-  label 'process_single_thread'
+  label 'process_medium'
   
   publishDir "${params.outdir}/MGFs", mode:'copy'
   
@@ -262,7 +260,7 @@ process create_searchgui_paramfile {
  * STEP 4 - run database search
  */
 process run_searchgui_search {
-  label 'process_medium'
+  label 'process_high'
   
   publishDir "${params.outdir}/searchgui", mode:'copy'
   
@@ -317,7 +315,7 @@ process set_proline_inputfiles {
  * STEP 9 - set up Proline experimental design
  */
 process set_proline_exp_design {
-  label 'process_very_low'
+  label 'process_low'
   label 'process_single_thread'
 
   publishDir "${params.outdir}/params", mode:'copy'
