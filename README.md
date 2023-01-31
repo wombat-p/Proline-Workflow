@@ -1,3 +1,8 @@
+# Update
+This project and workflow has been merged into the WOMBAT pipelines.
+
+Please go to https://github.com/wombat-p/WOMBAT-Pipelines
+
 # Workflows to analyze label-free data with SearchGUI and Proline
 
 ## Content
