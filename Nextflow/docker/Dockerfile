@@ -41,13 +41,14 @@ RUN apt-get update; apt-get install -y apt-transport-https ca-certificates dirmn
 #RUN java -version
 
 ### Install Mono (required for thermo2mzdb execution)
-RUN apt install -y mono-complete
+RUN apt install -y mono-complete libgomp1
 
 ### Install mzDB tools
 RUN mkdir mzdb-tools ; cd mzdb-tools; \
-    wget https://github.com/mzdb/mzdb4s/releases/download/0.2/mzdb-conversion-tools_0.2.zip; \
-    unzip mzdb-conversion-tools_0.2.zip; cd ..; \
+    wget https://github.com/mzdb/mzdb4s/releases/download/0.4.3/mzdbtools_0.4.3_linux_x64.zip; \
+    unzip mzdbtools_0.4.3_linux_x64.zip; cd ..; \
     chmod a+x /mzdb-tools/run_thermo2mzdb.sh; chmod a+x /mzdb-tools/thermo2mzdb; ln -s /mzdb-tools/run_thermo2mzdb.sh /usr/bin/thermo2mzdb; \
+    chmod a+x /mzdb-tools/mzdbtools; \
     chmod a+x /mzdb-tools/run_mzdb2mgf.sh; chmod a+x /mzdb-tools/mzdb2mgf; ln -s /mzdb-tools/run_mzdb2mgf.sh /usr/bin/mzdb2mgf
 
 ### Install Proline CLI
